@@ -105,7 +105,7 @@ export function Repo({ title, deploy, path, projectId, onDelete, onEdit }: IRepo
                     <Button
                         variant="contained"
                         color="success"
-                        onClick={() => run(`gnome-terminal (--) (bash) (-c) (cd "${path}";branch_name=$(git rev-parse --abbrev-ref HEAD); git add . ; git commit -m "${commit}"; git push origin $branch_name; sleep 30)`)}
+                        onClick={() => run(`gnome-terminal (--) (bash) (-c) (cd "${path}";branch_name=$(git rev-parse --abbrev-ref HEAD); git add . ; git commit -m "${commit}"; proxychains4  git push origin $branch_name; sleep 30)`)}
                     >
                         Commit Changes & Push
                     </Button>
