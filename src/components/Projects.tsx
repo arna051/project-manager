@@ -2,17 +2,12 @@
 
 import { Swipe } from "@/elements/Swipe";
 import { Title } from "@/elements/Title";
-import { Box, Button, Container, MenuItem, Skeleton, Stack, TextField } from "@mui/material";
-import { useBoolean } from "@/hooks/useBoolean";
-import { ConfigDialog } from "@/elements/ConfigDialog";
+import { Box, Container, Skeleton, TextField } from "@mui/material";
 import { z } from "zod";
-import { useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { getConfig, run, saveConfig } from "@/utils/electron";
-import { Field, Form } from "@/elements/hook-form";
+import { getConfig } from "@/utils/electron";
 import { Project } from "@/elements/Project";
-import { RHFServers } from "@/elements/Servers";
+import { useRouter } from "next/navigation";
 
 
 export const schema = z.object({
@@ -28,54 +23,20 @@ export const schema = z.object({
 
 export function Projects() {
 
-    const open = useBoolean();
+    const router = useRouter()
+
 
     const [items, setItems] = useState<any[]>([])
     const [search, setSearch] = useState("")
 
-    const [categories, setCategories] = useState<any[]>([])
-
-
-    const methods = useForm<any>({
-        resolver: zodResolver(schema),
-        defaultValues: {
-            configs: []
-        }
-    });
-
-    const { handleSubmit, control } = methods;
-
-
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: "configs",
-    });
-
-    const onSubmit = handleSubmit(data => {
-        saveConfig("projects-contracts", data.configs.map((x: any) => {
-            if (!x.servers) x.servers = [];
-            return x;
-        }))
-    })
-
     const load = async () => {
         const temp = await getConfig("projects-contracts", [])
-        const cats = await getConfig("projects", []);
-
-        setCategories(cats)
-
-        const object: Record<string, any> = {
-            configs: temp
-        }
-        Object.keys(object).forEach(key => {
-            methods.setValue(key, object[key])
-        });
         setItems(temp)
     }
 
     useEffect(() => {
         load()
-    }, [open.value])
+    }, [])
 
     return (
         <Container maxWidth="md" className="wrapper">
@@ -85,7 +46,7 @@ export function Projects() {
                 icon={
                     <svg xmlns="http://www.w3.org/2000/svg" width={40} height={40} viewBox="0 0 21 21"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" d="m2.5 10.5l8 4l8.017-4M2.5 14.5l8 4l8.017-4M2.5 6.657l8.008 3.843l8.009-3.843L10.508 2.5z" strokeWidth={1}></path></svg>
                 }
-                onConfig={open.onTrue}
+                onConfig={() => router.push("/projects")}
             />
 
             <Box className="section">
@@ -117,47 +78,6 @@ export function Projects() {
                     />
                 </Box>
             </Box>
-
-            <ConfigDialog open={open.value} onClose={open.onFalse} onSubmit={onSubmit} maxWidth="md">
-                <Form methods={methods} onSubmit={onSubmit}>
-                    {fields.map((keyword, index) => (
-                        <Stack key={keyword.id} alignItems="center" gap={1} sx={{ py: 2 }}>
-                            <Field.Text
-                                name={`configs.${index}.title`}
-                                fullWidth
-                                label="Title"
-                            />
-                            <Field.Text
-                                name={`configs.${index}.image`}
-                                fullWidth
-                                label="Image"
-                            />
-                            <Field.Text
-                                name={`configs.${index}.desc`}
-                                fullWidth
-                                label="Description"
-                            />
-                            <Field.Select
-                                name={`configs.${index}.category`}
-                                fullWidth
-                                label="Category"
-                                children={
-                                    categories.map(cat => <MenuItem key={cat.title} value={cat.title}>{cat.title}</MenuItem>)
-                                }
-                            />
-                            <RHFServers name={`configs.${index}.servers`} parentId={index} />
-                            <Button fullWidth variant="outlined" color="error" onClick={() => remove(index)}>Delete</Button>
-                        </Stack>
-                    ))}
-                    <Button variant="contained" onClick={() => append({
-                        title: "",
-                        image: "",
-                        desc: "",
-                        id: fields.length + 10,
-                        category: ""
-                    })} size="large" fullWidth sx={{ my: 4 }}>Add New Project</Button>
-                </Form>
-            </ConfigDialog>
         </Container >
     );
 }

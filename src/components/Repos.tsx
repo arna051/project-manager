@@ -2,16 +2,15 @@
 
 import { Swipe } from "@/elements/Swipe";
 import { Title } from "@/elements/Title";
-import { Box, Button, Chip, Container, MenuItem, Skeleton, Stack } from "@mui/material";
+import { Box, Button, Container, MenuItem, Skeleton, Stack } from "@mui/material";
 import { useBoolean } from "@/hooks/useBoolean";
 import { ConfigDialog } from "@/elements/ConfigDialog";
 import { z } from "zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { getConfig, run, saveConfig } from "@/utils/electron";
+import { getConfig, saveConfig } from "@/utils/electron";
 import { Field, Form } from "@/elements/hook-form";
-import { Recent } from "@/utils/recent";
 import { Repo } from "@/elements/Repo";
 
 

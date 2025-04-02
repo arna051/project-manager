@@ -1,16 +1,26 @@
 import { useBoolean } from "@/hooks/useBoolean"
 import { run } from "@/utils/electron"
 import { Recent } from "@/utils/recent"
-import { alpha, Button, Chip, Dialog, DialogActions, DialogContent, Stack, Typography } from "@mui/material"
+import { alpha, Box, Button, Chip, Dialog, DialogActions, DialogContent, Divider, Stack, TextField, Typography } from "@mui/material"
+import { useState } from "react"
 
-type Props = {
+export type IRepo = {
+    id: number
     title: string
     path: string
     deploy: string
-    projectId: string
+    projectId: number
 }
-export function Repo({ title, deploy, path, projectId }: Props) {
+
+type Props = {
+    onDelete?: VoidFunction
+    onEdit?: VoidFunction
+}
+
+export function Repo({ title, deploy, path, projectId, onDelete, onEdit }: IRepo & Props) {
     const open = useBoolean();
+
+    const [commit, setCommit] = useState("");
 
     function renderIcon() {
         if (title.includes("API")) return <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24"><path fill="currentColor" d="m12 14l-2-2l2-2l2 2zM9.875 8.471L8.183 6.78L12 2.962l3.817 3.817l-1.692 1.692L12 6.346zm-3.096 7.346L2.962 12l3.817-3.817L8.47 9.875L6.346 12l2.125 2.125zm10.442 0l-1.692-1.692L17.654 12l-2.125-2.125l1.692-1.692L21.038 12zM12 21.038l-3.817-3.817l1.692-1.692L12 17.654l2.125-2.125l1.692 1.692z"></path></svg>
@@ -30,7 +40,6 @@ export function Repo({ title, deploy, path, projectId }: Props) {
                 </Stack>
             }
             onClick={open.onTrue}
-            sx={{ mx: 1 }}
         />
         <Dialog
             open={open.value}
@@ -84,11 +93,30 @@ export function Repo({ title, deploy, path, projectId }: Props) {
                     </Button>
 
 
+                    <Divider sx={{ my: 4 }} />
+
+                    <TextField
+                        value={commit}
+                        onChange={e => setCommit(e.target.value)}
+                        label="Commit"
+
+                    />
+
+                    <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => run(`gnome-terminal (--) (bash) (-c) (cd "${path}";branch_name=$(git rev-parse --abbrev-ref HEAD); git add . ; git commit -m "${commit}"; git push origin $branch_name sleep 30)`)}
+                    >
+                        Commit Changes & Push
+                    </Button>
 
                 </Stack>
             </DialogContent>
             <DialogActions>
-                <Button onClick={open.onFalse}>Close</Button>
+                <Button variant="outlined" onClick={onEdit}>Edit</Button>
+                <Button color="error" onClick={onDelete}>Delete</Button>
+                <Box sx={{ flex: '1 1 auto' }} />
+                <Button onClick={open.onFalse} color="inherit">Close</Button>
             </DialogActions>
         </Dialog>
     </>

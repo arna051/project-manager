@@ -2,17 +2,13 @@
 
 import { Swipe } from "@/elements/Swipe";
 import { Title } from "@/elements/Title";
-import { Box, Button, Container, Skeleton, Stack, TextField } from "@mui/material";
+import { Box, Container, Skeleton, TextField } from "@mui/material";
 import { useBoolean } from "@/hooks/useBoolean";
-import { ConfigDialog } from "@/elements/ConfigDialog";
 import { z } from "zod";
-import { useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { getConfig, saveConfig } from "@/utils/electron";
-import { Field, Form } from "@/elements/hook-form";
-import { toast } from "sonner";
-import { Category } from "@/elements/Category";
+import { Category, ICategory } from "@/elements/Category";
+import { CategorySave } from "./CategorySave";
 
 
 export const schema = z.object({
@@ -29,38 +25,22 @@ export function ProjectsCategories() {
 
     const [items, setItems] = useState<any[]>([]);
 
-    const [search, setSearch] = useState("")
+    const [search, setSearch] = useState("");
 
+    const [edit, setEdit] = useState<ICategory | null>(null)
 
-    const methods = useForm<any>({
-        resolver: zodResolver(schema),
-        defaultValues: {
-            configs: []
-        }
-    });
+    function handleDelete(index: number) {
+        saveConfig("projects", items.filter((_, i) => i !== index));
+        load()
+    }
 
-    const { handleSubmit, control } = methods;
-
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: "configs",
-    });
-
-    const onSubmit = handleSubmit(data => {
-        const titles: string[] = data.configs.map((x: any) => x.title)
-        if (titles.some((x, i) => titles.filter((_, o) => i !== o).includes(x))) return toast.error("cannot create duplicated category")
-        saveConfig("projects", data.configs)
-    })
+    function handleEdit(category: ICategory) {
+        setEdit(category);
+        open.onTrue();
+    }
 
     const load = async () => {
         const temp = await getConfig("projects", [])
-
-        const object: Record<string, any> = {
-            configs: temp
-        }
-        Object.keys(object).forEach(key => {
-            methods.setValue(key, object[key])
-        });
         setItems(temp)
     }
 
@@ -80,7 +60,7 @@ export function ProjectsCategories() {
             />
 
             <Box className="section">
-                <Swipe height={210}>
+                <Swipe height={230}>
                     {
                         items.length === 0 ?
                             new Array(13).fill(13).map((_, i) => <Skeleton
@@ -94,7 +74,13 @@ export function ProjectsCategories() {
                             :
                             items
                                 .filter(x => new RegExp(search, 'i').test(x.title))
-                                .map(item => <Category {...item} key={item.title} />)
+                                .map((item, i) => <Category
+                                    {...item}
+                                    key={item.title}
+                                    onDelete={() => handleDelete(i)}
+                                    onEdit={() => handleEdit({ ...item, index: i })}
+                                    link={`/projects?category=${item.title}`}
+                                />)
                     }
                 </Swipe>
                 <Box sx={{ m: 2 }}>
@@ -107,35 +93,12 @@ export function ProjectsCategories() {
                     />
                 </Box>
             </Box>
-            <ConfigDialog open={open.value} onClose={open.onFalse} onSubmit={onSubmit} maxWidth="md">
-                <Form methods={methods} onSubmit={onSubmit}>
-                    {fields.map((keyword, index) => (
-                        <Stack key={keyword.id} alignItems="center" gap={1} sx={{ py: 2 }}>
-                            <Field.Text
-                                name={`configs.${index}.title`}
-                                fullWidth
-                                label="Title"
-                            />
-                            <Field.Text
-                                name={`configs.${index}.image`}
-                                fullWidth
-                                label="Image"
-                            />
-                            <Field.Text
-                                name={`configs.${index}.desc`}
-                                fullWidth
-                                label="Description"
-                            />
-                            <Button fullWidth variant="outlined" color="error" onClick={() => remove(index)}>Delete</Button>
-                        </Stack>
-                    ))}
-                    <Button variant="contained" onClick={() => append({
-                        title: "",
-                        image: "",
-                        desc: ""
-                    })} size="large" fullWidth sx={{ my: 4 }}>Add New Category</Button>
-                </Form>
-            </ConfigDialog>
+            <CategorySave
+                open={open.value}
+                onClose={open.onFalse}
+                categories={items}
+                category={edit}
+            />
         </Container >
     );
 }

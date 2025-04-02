@@ -4,12 +4,13 @@ import { alpha, Box, Button, Chip, Dialog, DialogActions, DialogContent, Stack, 
 import { useState } from "react"
 import { toast } from "sonner"
 
-type Props = {
+export type ISSH = {
     title: string
     server: string
     proxy: boolean
+    id: number
 }
-export function SSH({ proxy, server, title }: Props) {
+export function SSH({ proxy, server, title }: ISSH) {
     const open = useBoolean();
     const [ssh, setSsh] = useState(server);
 
@@ -30,7 +31,6 @@ export function SSH({ proxy, server, title }: Props) {
                 </Stack>
             }
             onClick={open.onTrue}
-            sx={{ mx: 1 }}
         />
         <Dialog
             open={open.value}

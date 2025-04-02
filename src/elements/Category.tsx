@@ -1,34 +1,23 @@
 import { useBoolean } from "@/hooks/useBoolean";
 import { getConfig } from "@/utils/electron";
-import { alpha, Box, Button, Card, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogContent, Skeleton, TextField, Typography } from "@mui/material"
+import { Box, Card, CardActions, CardContent, CardMedia, IconButton, Typography } from "@mui/material"
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Swipe } from "./Swipe";
-import { Project } from "./Project";
-
-type Props = {
+export type ICategory = {
     title: string
     image: string
     desc: string
+    index?: number
 }
 
 
-export function Category({ image, desc, title }: Props) {
-    const open = useBoolean();
-    const save = useBoolean();
+type Props = {
+    onDelete?: VoidFunction
+    onEdit?: VoidFunction
+    link?: string
+}
 
-    const [items, setItems] = useState<any[]>([]);
-
-    const [search, setSearch] = useState("")
-
-
-    const load = async () => {
-        const temp = (await getConfig("projects-contracts", [])).filter((x: any) => x.category === title)
-        setItems(temp)
-    }
-
-    useEffect(() => {
-        load()
-    }, [open.value, save.value])
+export function Category({ image, desc, title, link, onDelete, onEdit }: ICategory & Props) {
     return <>
         <Card
             sx={{
@@ -73,61 +62,26 @@ export function Category({ image, desc, title }: Props) {
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    justifyContent: 'end'
+                    justifyContent: 'end',
+                    gap: 0,
+                    '& *': {
+                        ml: '0 !important'
+                    }
                 }}
             >
-                <Button onClick={open.onTrue}>
-                    See Projects
-                </Button>
+
+                <>
+                    {onDelete && <IconButton color="error" onClick={onDelete}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width={21} height={21} viewBox="0 0 21 21"><g fill="none" fillRule="evenodd"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" d="M6.043 4.773Q8 4.02 10.5 4.01t4.457.763a3 3 0 0 1 2.14 3.341l-1.075 6.994a4 4 0 0 1-3.954 3.392H8.932a4 4 0 0 1-3.954-3.392L3.902 8.114a3 3 0 0 1 2.141-3.34" strokeWidth={1}></path><path fill="currentColor" d="M10.5 10c3.556 0 5-1.5 5-2.5s-1.444-2.25-5-2.25s-5 1.25-5 2.25s1.444 2.5 5 2.5"></path></g></svg>
+                    </IconButton>}
+                    {onEdit && <IconButton color="warning" onClick={onEdit}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width={21} height={21} viewBox="0 0 21 21"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" d="M17 4a2.12 2.12 0 0 1 0 3l-9.5 9.5l-4 1l1-3.944l9.504-9.552a2.116 2.116 0 0 1 2.864-.125zm-1.5 2.5l1 1" strokeWidth={1}></path></svg>
+                    </IconButton>}
+                    {!!link && <IconButton color="info" LinkComponent={Link} href={link}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width={21} height={21} viewBox="0 0 21 21"><g fill="none" fillRule="evenodd" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1}><path d="M10.5 16q4.695 0 8.5-5.5Q15.195 5 10.5 5T2 10.5Q5.805 16 10.5 16"></path><path d="M10.5 7q.277 0 .543.042a2.5 2.5 0 0 0 2.915 2.916q.042.264.042.542A3.5 3.5 0 1 1 10.5 7"></path></g></svg>
+                    </IconButton>}
+                </>
             </CardActions>
         </Card>
-        <Dialog
-            open={open.value}
-            onClose={open.onFalse}
-            maxWidth="sm"
-            fullScreen
-            slotProps={{
-                paper: {
-                    sx(theme) {
-                        return {
-                            backgroundColor: alpha(theme.palette.background.default, .4),
-                            backgroundImage: 'none',
-                            backdropFilter: 'blur(10px)'
-                        }
-                    },
-                }
-            }}
-        >
-            <DialogContent>
-                <Box sx={{ py: 4 }}>
-                    <TextField
-                        label="Search"
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                        sx={{ mx: 2 }}
-                    />
-                    <Swipe height={350}>
-                        {
-                            items.length === 0 ?
-                                new Array(13).fill(13).map((_, i) => <Skeleton
-                                    variant="rounded"
-                                    width={200}
-                                    height={200}
-                                    key={i}
-                                    animation="wave"
-                                    sx={{ m: 1 }}
-                                />)
-                                :
-                                items.map(item => <Project {...item} key={item.id} />)
-                        }
-                    </Swipe>
-                </Box>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={open.onFalse}>
-                    Close
-                </Button>
-            </DialogActions>
-        </Dialog>
     </>
 }

@@ -1,10 +1,8 @@
 "use client";
 
-import { alpha, Box, IconButton, Stack, Typography } from "@mui/material"
-import { ReactNode, useMemo, useRef } from "react"
-import * as motion from "motion/react-client";
+import { Box, IconButton, Stack, Typography } from "@mui/material"
+import { ReactNode, useRef } from "react"
 import { Appear } from "./Animations"
-import { generateRandomArray } from "@/utils/number";
 
 type Props = {
     icon: ReactNode
@@ -48,39 +46,7 @@ export function Title({ onConfig, subtitle, title, icon }: Props) {
                 </Typography>
             </Stack>
         </Appear>
-        {/* <Box sx={{ flex: '1 1 auto', }} /> */}
-        <Appear style={{ flex: '1 1 auto' }} delay={2}>
-            <Box
-                sx={theme => ({
-                    backgroundColor: alpha(theme.palette.primary.main, .1),
-                    height: 5,
-
-                    overflow: 'hidden',
-                    position: 'relative'
-                })}
-                ref={ref}
-            >
-                {useMemo(generateRandomArray, []).map((x, i) => <Box
-                    key={x}
-                    component={motion.div}
-                    sx={{
-                        bgcolor: `${colors[i]}.main`,
-                        width: 5,
-                        height: 5,
-                        borderRadius: '50%',
-                        position: 'absolute'
-                    }}
-                    initial={{
-                        translateX: 0
-                    }}
-                    animate={{
-                        translateX: ref.current?.clientWidth || 500
-                    }}
-                    transition={{ type: "spring", duration: x < 10 ? x : 5, repeat: Infinity, delay: x, repeatType: 'mirror' }}
-                />)}
-            </Box>
-        </Appear>
-
+        <Box sx={{ flex: '1 1 auto', }} />
         {
             onConfig ? <Appear delay={5}>
                 <IconButton onClick={onConfig}>

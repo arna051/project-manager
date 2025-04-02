@@ -22,7 +22,7 @@ export function RHFServers({ name, parentId }: Props) {
         setItems(temp)
     }
 
-    const { configs } = watch();
+    const { configs, servers } = watch();
 
     useEffect(() => {
         load()
@@ -33,12 +33,13 @@ export function RHFServers({ name, parentId }: Props) {
             direction="row"
             gap={2}
             alignItems="center"
+            flexWrap="wrap"
             sx={{ width: '100%' }}
         >
             {fields.map((keyword, index) => (
                 <Chip
                     key={keyword.id}
-                    label={items.find(x => x.id === configs[parentId]?.servers[index])?.title}
+                    label={items.find(x => x.id === servers[index])?.title}
                     variant="filled"
                     onDelete={() => remove(index)}
                 />

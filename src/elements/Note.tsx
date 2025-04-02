@@ -1,10 +1,9 @@
 import { useBoolean } from "@/hooks/useBoolean";
-import { alpha, Box, Button, Card, CardActions, CardContent, CardMedia, Container, Dialog, DialogActions, DialogContent, IconButton, Rating, Stack, Typography } from "@mui/material"
+import { alpha, Box, Button, Card, CardActions, CardContent, CardMedia, Container, Dialog, DialogActions, DialogContent, DialogContentText, IconButton, Rating, Stack, Typography } from "@mui/material"
 
-export type ITodo = {
+export type INote = {
     id: number
     title: string
-    priority: number
     desc: string
     image: string
     projectId: number
@@ -16,7 +15,7 @@ type Props = {
     onEdit?: VoidFunction
 }
 
-export function TodoTask({ priority, desc, title, onDelete, onEdit, image }: ITodo & Props) {
+export function Note({ desc, title, onDelete, onEdit, image }: INote & Props) {
     const open = useBoolean();
 
 
@@ -56,7 +55,6 @@ export function TodoTask({ priority, desc, title, onDelete, onEdit, image }: ITo
                 right: 0
             }}>
                 <Typography variant="h6">{title}</Typography>
-                <Rating value={priority} readOnly size="small" />
                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>{desc.substring(0, 150)}</Typography>
             </CardContent>
             <CardActions
@@ -136,65 +134,13 @@ export function TodoTask({ priority, desc, title, onDelete, onEdit, image }: ITo
                         <Typography variant="h1">
                             {title}
                         </Typography>
-                        <Box sx={{ mt: 2 }}>
-                            <Rating value={priority} readOnly />
-                        </Box>
                         {
-                            desc
-                                .split("\n")
-                                .map((item, i) => {
-                                    if (item.length < 2) return <br key={i} />
-                                    const done = item.startsWith("+");
-                                    const title = item.startsWith("##");
-                                    const text = item.startsWith("#");
-                                    return <Stack
-                                        direction="row"
-                                        alignItems="center"
-                                        gap={2}
-                                        key={i}
-                                        sx={{ my: 1 }}
-                                    >
-                                        {
-                                            !title && !text && <>
-                                                {
-                                                    done ?
-                                                        <Box
-                                                            sx={{
-                                                                color: 'success.main',
-                                                                display: 'flex',
-                                                                alignItems: 'center'
-                                                            }}
-                                                        >
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24"><path fill="currentColor" d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2" className="duoicon-secondary-layer" opacity={0.3}></path><path fill="currentColor" d="m15.535 8.381l-4.95 4.95l-2.12-2.121a1 1 0 1 0-1.415 1.414l2.758 2.758a1.1 1.1 0 0 0 1.556 0l5.586-5.586a1 1 0 1 0-1.415-1.415" className="duoicon-primary-layer"></path></svg>
-                                                        </Box> :
-                                                        <Box
-                                                            sx={{
-                                                                color: 'warning.main',
-                                                                display: 'flex',
-                                                                alignItems: 'center'
-                                                            }}
-                                                        >
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24"><path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,20a9,9,0,1,1,9-9A9,9,0,0,1,12,21Z"></path><rect width={2} height={7} x={11} y={6} fill="currentColor" rx={1}><animateTransform attributeName="transform" dur="9s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"></animateTransform></rect><rect width={2} height={9} x={11} y={11} fill="currentColor" rx={1}><animateTransform attributeName="transform" dur="0.75s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"></animateTransform></rect></svg>
-                                                        </Box>
-                                                }
-                                            </>
-                                        }
-
-                                        {
-                                            title ?
-                                                <Typography variant="h4" key={item}>
-                                                    {item.replace("+", "").replace("##", "").replace("#", "")}
-                                                </Typography>
-                                                : text ?
-                                                    <Typography variant="body1" key={item} color="text.secondary">
-                                                        {item.replace("+", "").replace("##", "").replace("#", "")}
-                                                    </Typography> :
-                                                    <Typography variant="subtitle1" key={item}>
-                                                        {item.replace("+", "").replace("##", "").replace("#", "")}
-                                                    </Typography>
-                                        }
-                                    </Stack>
-                                })
+                            desc.split("\n").map((x, i) => {
+                                if (x.length < 2) return <br key={i} />
+                                return <DialogContentText key={i}>
+                                    {x}
+                                </DialogContentText>
+                            })
                         }
                     </Box>
                 </Container>

@@ -11,7 +11,7 @@ export function Wrapper(props: Props) {
             width: '100%',
             p: 4,
             overflowX: 'hidden',
-            my: 8
+            my: 10
         }}
         {...props}
     />

@@ -9,7 +9,7 @@ export const saveConfig = (name: string, configs: any) => {
         console.log(err);
     }
 }
-export const getConfig = async (name: string, defaults: any) => {
+export const getConfig = async <T = any[]>(name: string, defaults: any): Promise<T> => {
     const electronApi = (window as any).electronAPI
     try {
         return electronApi.getConfig(name, defaults)
@@ -35,6 +35,24 @@ export const bringUp = () => {
         electronApi.bringUp()
     } catch (err) {
         console.log(err);
+    }
+}
+export const selectFile = async (): Promise<string | null> => {
+    const electronApi = (window as any).electronAPI
+    try {
+        return await electronApi.selectFile()
+    } catch (err) {
+        console.log(err);
+        return null;
+    }
+}
+export const selectFolder = async (): Promise<string | null> => {
+    const electronApi = (window as any).electronAPI
+    try {
+        return await electronApi.selectFolder()
+    } catch (err) {
+        console.log(err);
+        return null;
     }
 }
 

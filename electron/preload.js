@@ -5,4 +5,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     saveConfig: (name, configs) => ipcRenderer.send('save-config', name, configs),
     getConfig: async (name, configs) => await ipcRenderer.invoke('get-config', name, configs),
     bringUp: () => ipcRenderer.send('bring-up'),
+    selectFile: () => ipcRenderer.invoke('select-file'),
+    selectFolder: () => ipcRenderer.invoke('select-folder'),
 });

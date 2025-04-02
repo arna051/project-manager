@@ -1,4 +1,4 @@
-import { app, BrowserWindow, globalShortcut, ipcMain, screen } from 'electron';
+import { app, BrowserWindow, dialog, globalShortcut, ipcMain, screen } from 'electron';
 import path from 'path';
 import { existsSync } from 'fs';
 import { spawn } from 'child_process';
@@ -15,7 +15,7 @@ const __dirname = dirname(__filename);
 
 const dev = process.env.ELECTRON_ENV === 'development';
 
-console.log(`Development: ${dev}`);
+console.log(`Development Mode: ${dev}`);
 
 const configs = new AppConfigs();
 let mainWindow;
@@ -154,17 +154,63 @@ ipcMain.handle('get-config', async (_, name, _configs) => {
     return configs.get(name, _configs);
 });
 
+ipcMain.handle('select-file', async () => {
+    console.log("selecting File...");
+
+    const result = await dialog.showOpenDialog(BrowserWindow.getFocusedWindow(), {
+        properties: ['openFile'],
+    });
+    if (result.canceled) return null;
+    return result.filePaths[0]; // This gives you the actual path
+});
+
+ipcMain.handle('select-folder', async () => {
+    const result = await dialog.showOpenDialog(BrowserWindow.getFocusedWindow(), {
+        properties: ['openDirectory']
+    });
+
+    if (result.canceled) return null;
+    return result.filePaths[0]; // This is the absolute path to the selected folder
+});
+
 const extractParenthesesContent = (str) => {
-    const regex = /\(([^)]+)\)/g;
-    return [...str.matchAll(regex)].map(match => match[1]).filter(x => x);
+    const result = [];
+    let depth = 0;
+    let current = '';
+    for (let i = 0; i < str.length; i++) {
+        const char = str[i];
+        if (char === '(') {
+            if (depth === 0) current = ''; // start new capture
+            depth++;
+        } else if (char === ')') {
+            depth--;
+            if (depth === 0) result.push(current);
+        } else if (depth > 0) {
+            current += char;
+        }
+    }
+    return result;
 };
 
 const removeParenthesesContent = (str) => {
-    return str.replace(/\([^)]*\)/g, '');
+    let result = '';
+    let depth = 0;
+    for (let i = 0; i < str.length; i++) {
+        const char = str[i];
+        if (char === '(') {
+            depth++;
+        } else if (char === ')') {
+            depth--;
+        } else if (depth === 0) {
+            result += char;
+        }
+    }
+    return result.trim();
 };
-
 ipcMain.on('run', (_, command = '') => {
     const args = extractParenthesesContent(command);
+    console.log(args);
+
     const child = spawn(removeParenthesesContent(command).trim(), args, {
         detached: true,
         stdio: 'ignore'

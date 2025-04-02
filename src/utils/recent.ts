@@ -3,7 +3,7 @@
 type Arg = {
     title: string
     path: string
-    projectId: string
+    projectId: number
     deploy: string
 }
 function getRecent(): Arg[] {

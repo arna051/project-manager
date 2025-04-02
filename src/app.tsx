@@ -14,7 +14,7 @@ export function App(props: { children: React.ReactNode }) {
         :
         <>
             <Background />
-            <Header />
             {props.children}
+            <Header />
         </>
 }
