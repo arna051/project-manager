@@ -26,7 +26,7 @@ export function Notes() {
     }, [])
 
     return (
-        <Container maxWidth="md" className="wrapper">
+        <Container maxWidth="lg" className="wrapper">
             <Title
                 title="Notes"
                 subtitle="The things you wanted to be remember in the future."

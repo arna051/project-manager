@@ -57,7 +57,7 @@ export function NoteSave({ note, projects, notes, defaultProject, ...props }: Pr
     }) as any
 
     const load = () => {
-        const object: Record<string, any> = note || { ...initial, id: notes.length + 10, projectId: defaultProject };
+        const object: Record<string, any> = note || { ...initial, id: notes.reduce((t, c) => t + c.id, 1), projectId: defaultProject };
 
         Object.keys(object).forEach(key => {
             methods.setValue(key, object[key])

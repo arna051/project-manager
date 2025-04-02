@@ -57,7 +57,7 @@ export function CategorySave({ category, categories, ...props }: Props & DialogP
     }) as any
 
     const load = () => {
-        const object: Record<string, any> = category || { ...initial, id: categories.length + 10 }
+        const object: Record<string, any> = category || { ...initial }
         Object.keys(object).forEach(key => {
             methods.setValue(key, object[key])
         });

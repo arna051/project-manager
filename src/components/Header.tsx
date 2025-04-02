@@ -56,7 +56,7 @@ export function Header() {
                 right: 0,
                 top: 0,
             }}
-            maxWidth="md"
+            maxWidth="lg"
         >
             <AppBar
                 position="relative"

@@ -1,36 +1,31 @@
 "use client";
 
-import { TodoSave } from "@/components/SaveTodo";
-import { IProject } from "@/elements/Project";
-import { ITodo, TodoTask } from "@/elements/Todo";
+import { SSHSave } from "@/components/SaveSSH";
+import { ISSH, SSH } from "@/elements/SSH";
 import { useBoolean } from "@/hooks/useBoolean";
 import { getConfig, saveConfig } from "@/utils/electron";
 import { Box, Button, Container, Grid, Stack, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 
-export default function Todo() {
+export default function SSHPage() {
     const open = useBoolean();
-    const [items, setItems] = useState<ITodo[]>([]);
-    const [projects, setProjects] = useState<IProject[]>([]);
+    const [items, setItems] = useState<ISSH[]>([]);
     const [search, setSearch] = useState('');
-    const [edit, setEdit] = useState<ITodo | null>(null);
+    const [edit, setEdit] = useState<ISSH | null>(null);
 
     function handleDelete(id: number) {
-        saveConfig("todo", items.filter(x => x.id !== id));
+        saveConfig("ssh", items.filter(x => x.id !== id));
         load()
     }
 
-    function handleEdit(item: ITodo) {
+    function handleEdit(item: ISSH) {
         setEdit(item);
         open.onTrue();
     }
 
     const load = async () => {
-        const temp = await getConfig("todo", [])
+        const temp = await getConfig("ssh", [])
         setItems(temp)
-
-        const proj = await getConfig("projects-contracts", []);
-        setProjects(proj)
     }
 
     useEffect(() => {
@@ -39,14 +34,14 @@ export default function Todo() {
     return <Container sx={{ my: 12, py: 4 }} maxWidth="lg">
 
         <Stack direction="row" alignItems="center" gap={2}>
-            <svg xmlns="http://www.w3.org/2000/svg" width={50} height={50} viewBox="0 0 21 21"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" d="m2.5 10.5l8 4l8.017-4M2.5 14.5l8 4l8.017-4M2.5 6.657l8.008 3.843l8.009-3.843L10.508 2.5z" strokeWidth={1}></path></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width={50} height={50} viewBox="0 0 21 21"><g fill="none" fillRule="evenodd"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" d="M2.5 14.5v-2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2" strokeWidth={1}></path><path fill="currentColor" d="M6.5 13.5a1 1 0 1 0-2 0a1 1 0 0 0 2 0"></path><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" d="m2.5 8.494l.01-2a2 2 0 0 1 2-1.994H16.5a2 2 0 0 1 1.994 1.85l.006.156l-.01 2a2 2 0 0 1-2 1.994H4.5a2 2 0 0 1-1.995-1.85z" strokeWidth={1}></path><path fill="currentColor" d="M6.5 7.5a1 1 0 1 0-2 0a1 1 0 0 0 2 0"></path></g></svg>
 
             <Stack>
                 <Typography variant="h4">
-                    Todo
+                    Servers
                 </Typography>
                 <Typography variant="subtitle2">
-                    The Jobs you must get done!
+                    All the ssh connections you have!
                 </Typography>
             </Stack>
 
@@ -59,7 +54,7 @@ export default function Todo() {
                 size="large"
                 onClick={open.onTrue}
             >
-                New Todo
+                New Server
             </Button>
         </Stack>
 
@@ -73,33 +68,28 @@ export default function Todo() {
             />
         </Stack>
 
-        <Grid container spacing={1} sx={{ my: 4 }}>
+        <Stack direction="row" alignItems="center" flexWrap="wrap" gap={2} sx={{ my: 4 }}>
             {
                 items
                     .filter(x => {
                         const reg = new RegExp(search, 'i');
-                        return (reg.test(x.title) || reg.test(x.desc))
+                        return (reg.test(x.title) || reg.test(x.server))
                     })
-                    .map((item, i) => <Grid
-                        size={{
-                            xs: 12,
-                            sm: 4,
-                            md: 3
-                        }}
-                        key={item.id + item.title}
-                    >
-                        <TodoTask {...item} key={item.title + i} onDelete={() => handleDelete(item.id)} onEdit={() => handleEdit(item)} />
-                    </Grid>
+                    .map((item, i) => <SSH
+                        {...item}
+                        key={item.title + i}
+                        onDelete={() => handleDelete(item.id)}
+                        onEdit={() => handleEdit(item)}
+                    />
                     )
             }
-        </Grid>
+        </Stack>
 
 
-        <TodoSave
-            projects={projects}
-            todos={items}
+        <SSHSave
+            sshs={items}
             open={open.value}
-            todo={edit}
+            ssh={edit}
             onClose={() => {
                 open.onFalse()
                 setEdit(null);

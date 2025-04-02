@@ -7,7 +7,6 @@ import express from 'express';
 import AppConfigs from './config.js'; // ensure config is ESM or has default export
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { Proxy } from './proxy.js';
 
 // __dirname polyfill in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -109,27 +108,6 @@ const startServer = async () => {
             }
         });
     });
-    server.get("/config.json", (req, res) => {
-        if (!existsSync('./configs.json')) {
-            return res.status(404).send("File not found");
-        }
-        res.download('./configs.json', path.basename('./configs.json'), (err) => {
-            if (err) {
-                console.error("Download error:", err);
-                res.status(500).send("Error downloading file");
-            }
-        });
-    });
-
-
-    server.get("/youth", Proxy.data("https://ahmedalhasan.me/api/data/documents?order=desc&orderBy=updatedAt&project=title&project=latinTitle&project=description&project=image&project=type"))
-    server.get("/youth/image/:name", Proxy.image('https://ahmedalhasan.me/api/fs/files/'));
-
-    server.get("/omega", Proxy.data("https://omegateb.com/api/data/products"))
-    server.get("/omega/image/:name", Proxy.image('https://omegateb.com/api/fs/files/'));
-
-    server.get("/ghalbedovom", Proxy.data("https://ghlbedovom.com/api/data/products"))
-    server.get("/ghalbedovom/image/:name", Proxy.image('https://ghlbedovom.com/api/fs/files/'));
 
     server.all('*', (req, res) => handle(req, res));
 

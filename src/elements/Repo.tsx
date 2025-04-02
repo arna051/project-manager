@@ -1,7 +1,7 @@
 import { useBoolean } from "@/hooks/useBoolean"
 import { run } from "@/utils/electron"
 import { Recent } from "@/utils/recent"
-import { alpha, Box, Button, Chip, Dialog, DialogActions, DialogContent, Divider, Stack, TextField, Typography } from "@mui/material"
+import { alpha, Box, Button, Chip, Dialog, DialogActions, DialogContent, Divider, IconButton, Stack, TextField, Typography } from "@mui/material"
 import { useState } from "react"
 
 export type IRepo = {
@@ -10,6 +10,7 @@ export type IRepo = {
     path: string
     deploy: string
     projectId: number
+    dev: string
 }
 
 type Props = {
@@ -17,7 +18,7 @@ type Props = {
     onEdit?: VoidFunction
 }
 
-export function Repo({ title, deploy, path, projectId, onDelete, onEdit }: IRepo & Props) {
+export function Repo({ title, deploy, path, projectId, dev, onDelete, onEdit }: IRepo & Props) {
     const open = useBoolean();
 
     const [commit, setCommit] = useState("");
@@ -37,9 +38,30 @@ export function Repo({ title, deploy, path, projectId, onDelete, onEdit }: IRepo
                     <Typography>
                         {title}
                     </Typography>
+                    <Box sx={{ width: 2 }} />
+                    {
+                        !!deploy && <IconButton size="small" color="warning" onClick={() => run(`gnome-terminal (--) (bash) (-c) (${deploy.split("\n").join(";")}; sleep 60)`)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24"><path fill="currentColor" d="m11.192 20.687l-6.384-3.68q-.38-.217-.593-.59Q4 16.044 4 15.61V8.391q0-.435.215-.808q.214-.373.593-.59l6.384-3.68q.38-.217.808-.217t.808.217l6.384 3.68q.38.216.594.59q.214.373.214.808v7.219q0 .434-.214.807q-.215.373-.594.59l-6.384 3.68q-.38.217-.808.217t-.808-.217m.308-8.4v7.427l.23.132q.135.077.27.077t.27-.077l.23-.132v-7.427L19 8.523v-.242q0-.097-.048-.193t-.144-.153l-.383-.221L12 11.427L5.575 7.714l-.383.22q-.096.058-.144.155Q5 8.185 5 8.28v.242z"></path></svg>
+                        </IconButton>
+                    }
+                    <IconButton size="small" onClick={() => {
+                        run(`code (${path})`)
+                        Recent.set({ title, deploy, path, projectId })
+                    }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width={18} height={18} viewBox="0 0 32 32"><path fill="#2196f3" d="M24.003 2L12 13.303L4.84 8L2 10l6.772 6L2 22l2.84 2L12 18.702L24.003 30L30 27.087V4.913ZM24 9.434v13.132L15.289 16Z"></path></svg>
+                    </IconButton>
+
+                    {
+                        !!dev && <IconButton size="small" color="success" onClick={() => run(`gnome-terminal (--) (bash) (-c) (${dev})`)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24"><path fill="currentColor" d="M9 17.192V6.808L17.154 12z"></path></svg>
+                        </IconButton>
+                    }
+
+                    <IconButton size="small" onClick={open.onTrue}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24"><path fill="currentColor" d="m10.135 21l-.362-2.892q-.556-.164-1.055-.454t-.927-.664l-2.668 1.135l-1.865-3.25l2.306-1.739q-.045-.27-.073-.548q-.03-.278-.03-.569t.03-.578t.073-.578L3.258 9.126l1.865-3.212L7.771 7.03q.448-.373.938-.664q.489-.29 1.045-.473L10.134 3h3.732l.361 2.912q.537.182 1.016.463t.909.654l2.725-1.115l1.865 3.211l-1.85 1.4q-.519-.183-1.05-.277t-1.073-.094q-.692 0-1.347.164q-.655.165-1.284.444q-.32-.575-.912-.919q-.591-.343-1.253-.343q-1.046 0-1.773.727T9.473 12q0 .662.328 1.24q.328.58.897.92q-.304.711-.414 1.47q-.111.759-.111 1.534q.064 1.053.447 2.047q.384.993 1.076 1.789zm5.93-.1q-1.33-.23-2.276-1.179q-.945-.948-1.156-2.279h.82q.207.981.919 1.693t1.694.919zm1.346.025v-.871q1.143-.237 1.908-1.152q.766-.916.766-2.133t-.766-2.133t-1.908-1.152v-.87q1.512.236 2.535 1.402q1.023 1.167 1.023 2.753t-1.023 2.753t-2.535 1.403m-4.778-4.829q.211-1.33 1.157-2.279q.945-.948 2.276-1.178v.846q-.981.206-1.694.918t-.918 1.693zm3.26 2.366v-3.385l2.6 1.692z"></path></svg>
+                    </IconButton>
                 </Stack>
             }
-            onClick={open.onTrue}
         />
         <Dialog
             open={open.value}

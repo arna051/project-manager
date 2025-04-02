@@ -27,7 +27,7 @@ export function Todo() {
     }, [])
 
     return (
-        <Container maxWidth="md" className="wrapper">
+        <Container maxWidth="lg" className="wrapper">
             <Title
                 title="Todo"
                 subtitle="The Jobs You Must Get Done!"

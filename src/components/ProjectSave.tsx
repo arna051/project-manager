@@ -48,9 +48,6 @@ export function ProjectSave({ project, projects, categories, ...props }: Props &
             if (index < 0) return toast.error("Could not find the project!")
             temp[index] = data;
         } else {
-            if (projects.find(x => x.id === data.id)) {
-                data.id = projects.reduce((t, c) => t + c.id, 1)
-            }
             temp.push(data)
         }
         saveConfig("projects-contracts", temp);
@@ -60,7 +57,7 @@ export function ProjectSave({ project, projects, categories, ...props }: Props &
     const { id } = methods.watch();
 
     const load = () => {
-        const object: Record<string, any> = project || { ...initial, id: projects.length + 10 }
+        const object: Record<string, any> = project || { ...initial, id: projects.reduce((t, c) => t + c.id, 1) }
         Object.keys(object).forEach(key => {
             methods.setValue(key, object[key])
         });

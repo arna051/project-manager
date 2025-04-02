@@ -36,7 +36,7 @@ export default function Notes() {
     useEffect(() => {
         load()
     }, [open.value])
-    return <Container sx={{ my: 12, py: 4 }} maxWidth="md">
+    return <Container sx={{ my: 12, py: 4 }} maxWidth="lg">
 
         <Stack direction="row" alignItems="center" gap={2}>
             <svg xmlns="http://www.w3.org/2000/svg" width={50} height={50} viewBox="0 0 21 21"><g fill="none" fillRule="evenodd" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1}><path d="M6.5 4.5h7l3 3v7a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2"></path><path d="M8.5 12.5h4a1 1 0 0 1 1 1v3h-6v-3a1 1 0 0 1 1-1m-1-5h2v2h-2z"></path></g></svg>

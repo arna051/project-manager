@@ -57,7 +57,7 @@ export function TodoTask({ priority, desc, title, onDelete, onEdit, image }: ITo
             }}>
                 <Typography variant="h6">{title}</Typography>
                 <Rating value={priority} readOnly size="small" />
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>{desc.substring(0, 150)}</Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>{desc.substring(0, 80).concat("...")}</Typography>
             </CardContent>
             <CardActions
                 sx={{
@@ -131,7 +131,7 @@ export function TodoTask({ priority, desc, title, onDelete, onEdit, image }: ITo
                 }}
             />
             <DialogContent>
-                <Container maxWidth="md">
+                <Container maxWidth="lg">
                     <Box sx={{ py: 12 }}>
                         <Typography variant="h1">
                             {title}

@@ -2,26 +2,14 @@
 
 import { Swipe } from "@/elements/Swipe";
 import { Title } from "@/elements/Title";
-import { Box, Button, Chip, Container, InputAdornment, Stack, TextField, Typography } from "@mui/material";
+import { Box, Container, TextField } from "@mui/material";
 import { useBoolean } from "@/hooks/useBoolean";
-import { ConfigDialog } from "@/elements/ConfigDialog";
-import { z } from "zod";
-import { useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { getConfig, run, saveConfig } from "@/utils/electron";
-import { Field, Form } from "@/elements/hook-form";
+import { getConfig } from "@/utils/electron";
 import { SSH } from "@/elements/SSH";
 
 
-export const schema = z.object({
-    configs: z.array(z.object({
-        title: z.string(),
-        server: z.string(),
-        proxy: z.boolean(),
-        id: z.number().optional(),
-    }))
-});
+
 
 export function SSHTunnels() {
 
@@ -30,35 +18,11 @@ export function SSHTunnels() {
     const [items, setItems] = useState<any[]>([])
     const [search, setSearch] = useState("")
 
-    const methods = useForm<any>({
-        resolver: zodResolver(schema),
-        defaultValues: {
-            configs: []
-        }
-    });
 
-    const { handleSubmit, control } = methods;
 
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: "configs",
-    });
-
-    const onSubmit = handleSubmit(data => {
-        saveConfig("ssh", data.configs.map((x: any, i: number) => {
-            if (!x.id) x.id = i + 13
-            return x;
-        }))
-    })
 
     const load = async () => {
         const temp = await getConfig("ssh", [])
-        const object: Record<string, any> = {
-            configs: temp
-        }
-        Object.keys(object).forEach(key => {
-            methods.setValue(key, object[key])
-        });
         setItems(temp)
     }
 
@@ -67,7 +31,7 @@ export function SSHTunnels() {
     }, [open.value])
 
     return (
-        <Container maxWidth="md" className="wrapper">
+        <Container maxWidth="lg" className="wrapper">
             <Title
                 title="SSH Tunnels"
                 subtitle="Your Servers SSH Connections are Bing Listed Here."
@@ -98,41 +62,6 @@ export function SSHTunnels() {
                     />
                 </Box>
             </Box>
-            <ConfigDialog open={open.value} onClose={open.onFalse} onSubmit={onSubmit} maxWidth="md">
-                <Form methods={methods} onSubmit={onSubmit}>
-                    {fields.map((keyword, index) => (
-                        <Stack key={keyword.id} alignItems="center" direction="row" gap={1} sx={{ py: 2 }}>
-                            <Field.Text
-                                name={`configs.${index}.title`}
-                                fullWidth
-                                label="Title"
-                                slotProps={{
-                                    input: {
-                                        endAdornment: <InputAdornment position="end">
-                                            <Field.Switch
-                                                name={`configs.${index}.proxy`}
-                                                label="Proxy"
-                                            />
-                                        </InputAdornment>
-                                    }
-                                }}
-                            />
-                            <Field.Text
-                                name={`configs.${index}.server`}
-                                fullWidth
-                                label="SSH Server"
-                            />
-                            <Button variant="outlined" color="error" onClick={() => remove(index)}>Delete</Button>
-                        </Stack>
-                    ))}
-                    <Button variant="contained" onClick={() => append({
-                        title: "",
-                        server: "",
-                        proxy: false,
-                        id: fields.length + 13
-                    })} size="large" fullWidth sx={{ my: 4 }}>Add New SSH</Button>
-                </Form>
-            </ConfigDialog>
         </Container >
     );
 }

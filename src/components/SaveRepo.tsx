@@ -22,13 +22,15 @@ const initial = {
     title: "",
     path: "",
     deploy: "",
-    projectId: 0
+    projectId: 0,
+    dev: ""
 }
 
 export const schema = z.object({
     id: z.number(),
     title: z.string(),
     path: z.string(),
+    dev: z.string().min(0),
     projectId: z.number(),
     deploy: z.string().min(0).optional()
 })
@@ -43,14 +45,12 @@ export function RepoSave({ repo, projects, repos, defaultProject, ...props }: Pr
 
     const onSubmit = handleSubmit(data => {
         const temp = [...repos];
-        if (repo?.id) {
-            const index = temp.findIndex(x => x.id === repo.id);
-            if (index < 0) return toast.error("Could not find the Note!")
+        const index = temp.findIndex(x => x.id === data.id);
+        console.log(temp, data.id, index);
+
+        if (index > -1) {
             temp[index] = data;
         } else {
-            if (repos.find(x => x.id === data.id)) {
-                data.id = repos.reduce((t, c) => t + c.id, 1)
-            }
             temp.push(data)
         }
         saveConfig("repos", temp);
@@ -58,7 +58,7 @@ export function RepoSave({ repo, projects, repos, defaultProject, ...props }: Pr
     }) as any
 
     const load = () => {
-        const object: Record<string, any> = repo || { ...initial, id: repos.length + 10, projectId: defaultProject };
+        const object: Record<string, any> = repo || { ...initial, id: repos.reduce((t, c) => t + c.id, 1), projectId: defaultProject };
 
         Object.keys(object).forEach(key => {
             methods.setValue(key, object[key])
@@ -78,6 +78,11 @@ export function RepoSave({ repo, projects, repos, defaultProject, ...props }: Pr
                     name="path"
                     fullWidth
                     label="Path"
+                />
+                <Field.Text
+                    name="dev"
+                    fullWidth
+                    label="Go-Dev Command"
                 />
                 <Field.Text
                     name="deploy"

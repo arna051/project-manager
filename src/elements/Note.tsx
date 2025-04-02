@@ -55,7 +55,7 @@ export function Note({ desc, title, onDelete, onEdit, image }: INote & Props) {
                 right: 0
             }}>
                 <Typography variant="h6">{title}</Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>{desc.substring(0, 150)}</Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>{desc.substring(0, 80).concat("...")}</Typography>
             </CardContent>
             <CardActions
                 sx={{
@@ -129,7 +129,7 @@ export function Note({ desc, title, onDelete, onEdit, image }: INote & Props) {
                 }}
             />
             <DialogContent>
-                <Container maxWidth="md">
+                <Container maxWidth="lg">
                     <Box sx={{ py: 12 }}>
                         <Typography variant="h1">
                             {title}

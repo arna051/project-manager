@@ -1,12 +1,16 @@
+"use client";
+
 import { Appear } from "@/elements/Animations";
+import { useSettings } from "@/hooks/useSettings";
 import { Avatar, Container, Stack, Typography } from "@mui/material";
 
 export function Profile() {
+    const { name, welcome, image } = useSettings()
     return <Appear>
-        <Container maxWidth="md" sx={{ mb: 4 }}>
+        <Container maxWidth="lg" sx={{ mb: 4 }}>
             <Stack direction="row" gap={4} alignItems="center">
                 <Avatar
-                    src="/sharohil.jpg"
+                    src={image ? `/file${image}` : "/sharohil.jpg"}
                     alt="sharohil"
                     sx={{
                         width: 110,
@@ -15,10 +19,10 @@ export function Profile() {
                 />
                 <Stack>
                     <Typography variant="h2">
-                        Hi, <Typography component="span" variant="h2" color="primary.main">Sharohil</Typography>
+                        Hi, <Typography component="span" variant="h2" color="primary.main">{name || "Sharohil"}</Typography>
                     </Typography>
                     <Typography variant="h5" color="text.secondary">
-                        Ready to Work Today? Happy Hacking!
+                        {welcome || "Ready to Work Today? Happy Hacking!"}
                     </Typography>
                 </Stack>
             </Stack>

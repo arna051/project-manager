@@ -62,7 +62,7 @@ export function CommonApps() {
     }, [open.value])
 
     return (
-        <Container maxWidth="md" className="wrapper">
+        <Container maxWidth="lg" className="wrapper">
             <Title
                 title="Common Apps"
                 subtitle="Most used app suggested by you"
@@ -79,7 +79,7 @@ export function CommonApps() {
             />
 
             <Box className="section">
-                <Swipe>
+                <Swipe height={150}>
                     <GridItem
                         icon="/icons/chrome.png"
                         title="Chrome"

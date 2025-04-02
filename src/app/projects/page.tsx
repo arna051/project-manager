@@ -40,7 +40,7 @@ export default function Projects() {
     useEffect(() => {
         load()
     }, [open.value])
-    return <Container sx={{ my: 12, py: 4 }} maxWidth="md">
+    return <Container sx={{ my: 12, py: 4 }} maxWidth="lg">
 
         <Stack direction="row" alignItems="center" gap={2}>
             <svg xmlns="http://www.w3.org/2000/svg" width={50} height={50} viewBox="0 0 21 21"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" d="m2.5 10.5l8 4l8.017-4M2.5 14.5l8 4l8.017-4M2.5 6.657l8.008 3.843l8.009-3.843L10.508 2.5z" strokeWidth={1}></path></svg>

@@ -10,7 +10,13 @@ export type ISSH = {
     proxy: boolean
     id: number
 }
-export function SSH({ proxy, server, title }: ISSH) {
+
+type Props = {
+    onDelete?: VoidFunction
+    onEdit?: VoidFunction
+}
+
+export function SSH({ proxy, server, title, onDelete, onEdit }: ISSH & Props) {
     const open = useBoolean();
     const [ssh, setSsh] = useState(server);
 
@@ -124,6 +130,9 @@ export function SSH({ proxy, server, title }: ISSH) {
                 </Stack>
             </DialogContent>
             <DialogActions>
+                <Button variant="outlined" onClick={onEdit}>Edit</Button>
+                <Button color="error" onClick={onDelete}>Delete</Button>
+                <Box sx={{ flex: '1 1 auto' }} />
                 <Button onClick={open.onFalse}>Close</Button>
             </DialogActions>
         </Dialog>

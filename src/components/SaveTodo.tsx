@@ -58,7 +58,7 @@ export function TodoSave({ todo, projects, todos, defaultProject, ...props }: Pr
     }) as any
 
     const load = () => {
-        const object: Record<string, any> = todo || { ...initial, id: todos.length + 10, projectId: defaultProject };
+        const object: Record<string, any> = todo || { ...initial, id: todos.reduce((t, c) => t + c.id, 1), projectId: defaultProject };
 
         Object.keys(object).forEach(key => {
             methods.setValue(key, object[key])

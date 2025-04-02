@@ -2,6 +2,7 @@
 
 import { NoteSave } from "@/components/SaveNote";
 import { RepoSave } from "@/components/SaveRepo";
+import { SSHSave } from "@/components/SaveSSH";
 import { TodoSave } from "@/components/SaveTodo";
 import { INote, Note } from "@/elements/Note";
 import { IProject } from "@/elements/Project";
@@ -10,7 +11,8 @@ import { ISSH, SSH } from "@/elements/SSH";
 import { Swipe } from "@/elements/Swipe";
 import { ITodo, TodoTask } from "@/elements/Todo";
 import { useBoolean } from "@/hooks/useBoolean";
-import { getConfig, saveConfig } from "@/utils/electron";
+import { getConfig, run, saveConfig } from "@/utils/electron";
+import { Recent } from "@/utils/recent";
 import { Box, Button, Container, Divider, Skeleton, Stack, TextField, Typography } from "@mui/material";
 import { use, useEffect, useState } from "react";
 
@@ -23,10 +25,11 @@ export default function Projects({ params }: any) {
     const [sshs, setSshs] = useState<ISSH[]>([])
     const [search, setSearch] = useState('');
 
-    const [noteOpen, todoOpen, repoOpen] = [useBoolean(), useBoolean(), useBoolean()]
+    const [noteOpen, todoOpen, repoOpen, sshOpen] = [useBoolean(), useBoolean(), useBoolean(), useBoolean()]
     const [editTodo, setEditTodo] = useState<ITodo | null>(null);
     const [editNote, setEditNote] = useState<INote | null>(null);
     const [editRepo, setEditRepo] = useState<IRepo | null>(null);
+    const [editSSH, setEditSSH] = useState<ISSH | null>(null);
 
 
     const load = async () => {
@@ -62,6 +65,11 @@ export default function Projects({ params }: any) {
         load()
     }
 
+    function handleDeleteServer(id: number) {
+        saveConfig("ssh", sshs.filter(x => x.id !== id));
+        load()
+    }
+
     const allTodos = projectTodos
         .sort((a, b) => b.priority - a.priority)
         .reduce((t, c) => t + c.desc + "\n", "")
@@ -88,24 +96,25 @@ export default function Projects({ params }: any) {
     }
     useEffect(() => {
         load()
-    }, [id, noteOpen.value, todoOpen.value, repoOpen.value]);
+    }, [id, noteOpen.value, todoOpen.value, repoOpen.value, sshOpen.value]);
 
     useEffect(() => {
         if (editNote) return noteOpen.onTrue();
         if (editTodo) return todoOpen.onTrue();
         if (editRepo) return repoOpen.onTrue();
-    }, [editNote, editTodo, editRepo]);
+        if (editSSH) return sshOpen.onTrue();
+    }, [editNote, editTodo, editRepo, editSSH]);
     return <Container
         sx={{
             my: 12,
             py: 4,
         }}
-        maxWidth="md"
+        maxWidth="lg"
     >
         <Box
             sx={{
                 position: 'relative',
-                height: { xs: 200, sm: 350 },
+                height: { xs: 200, sm: 350, md: 400, lg: 500 },
                 p: 4
             }}
         >
@@ -158,6 +167,12 @@ export default function Projects({ params }: any) {
                 <Button
                     variant="contained"
                     color="primary"
+                    onClick={() => {
+                        projectRepos.forEach(repo => {
+                            run(`code (${repo.path})`)
+                            Recent.set(repo)
+                        })
+                    }}
                 >
                     Open All
                 </Button>
@@ -166,6 +181,7 @@ export default function Projects({ params }: any) {
                 <Typography variant="caption" fontWeight="bold">Jobs to do:</Typography>
                 {
                     allTodos
+                        .slice(0, 7)
                         .map(job => <Stack direction="row" alignItems="center" key={job} gap={2}>
                             <Box
                                 sx={{
@@ -230,7 +246,11 @@ export default function Projects({ params }: any) {
                 <svg xmlns="http://www.w3.org/2000/svg" width={25} height={25} viewBox="0 0 21 21"><g fill="none" fillRule="evenodd"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" d="M2.5 14.5v-2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2" strokeWidth={1}></path><path fill="currentColor" d="M6.5 13.5a1 1 0 1 0-2 0a1 1 0 0 0 2 0"></path><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" d="m2.5 8.494l.01-2a2 2 0 0 1 2-1.994H16.5a2 2 0 0 1 1.994 1.85l.006.156l-.01 2a2 2 0 0 1-2 1.994H4.5a2 2 0 0 1-1.995-1.85z" strokeWidth={1}></path><path fill="currentColor" d="M6.5 7.5a1 1 0 1 0-2 0a1 1 0 0 0 2 0"></path></g></svg>
 
                 <Typography variant="h6">Servers</Typography>
+                <Box sx={{ flex: '1 1 auto' }} />
 
+                <Button size="small" onClick={sshOpen.onTrue}>
+                    New Server
+                </Button>
             </Stack>
             <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap" sx={{ my: 2 }}>
                 {
@@ -242,6 +262,8 @@ export default function Projects({ params }: any) {
                             return <SSH
                                 key={ssh}
                                 {...server}
+                                onDelete={() => handleDeleteServer(ssh)}
+                                onEdit={() => setEditSSH(server)}
                             />
                         })
                 }
@@ -349,5 +371,24 @@ export default function Projects({ params }: any) {
             }}
             defaultProject={project.id}
         />
+
+        <SSHSave
+            sshs={sshs}
+            open={sshOpen.value}
+            ssh={editSSH}
+            onClose={() => {
+                sshOpen.onFalse()
+                setEditSSH(null);
+            }}
+            onSaved={async newSsh => {
+                const projects = await getConfig<IProject[]>("projects-contracts", [])
+                const index = projects.findIndex(x => x.id === project.id);
+                if (index < 0) return;
+                projects[index].servers.push(newSsh.id)
+                saveConfig("projects-contracts", projects);
+                load()
+            }}
+        />
+
     </Container>
 }

@@ -49,7 +49,7 @@ export function ProjectsCategories() {
     }, [open.value])
 
     return (
-        <Container maxWidth="md" className="wrapper">
+        <Container maxWidth="lg" className="wrapper">
             <Title
                 title="Work Category"
                 subtitle="Projects By Category Prepared For You!"

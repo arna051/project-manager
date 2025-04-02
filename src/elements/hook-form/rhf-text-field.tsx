@@ -15,7 +15,7 @@ type Props = TextFieldProps & {
 export function RHFTextField({ name, helperText, type, ...other }: Props) {
   const { control } = useFormContext();
 
-  const isFileSelect = name === 'image' || name === 'video'
+  const isFileSelect = name === 'image' || name === 'background'
   const isFolderSelect = name === 'path'
   return (
     <Controller

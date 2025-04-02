@@ -7,6 +7,7 @@ import { useBoolean } from "@/hooks/useBoolean";
 import { useEffect, useState } from "react";
 import { run } from "@/utils/electron";
 import { Recent } from "@/utils/recent";
+import { Repo } from "@/elements/Repo";
 
 
 export function RecentRepos() {
@@ -25,28 +26,14 @@ export function RecentRepos() {
     }, [])
 
     function renderItem(item: any) {
-        return <Chip
-            variant="filled"
-            label={
-                <Stack direction="row" alignItems="center" gap={1}>
-                    <Box className="blob" />
-                    <Typography>
-                        {item.title}
-                    </Typography>
-                </Stack>
-            }
+        return <Repo
+            {...item}
             key={item.title}
-            size="medium"
-            sx={{ minWidth: 100, mx: 1 }}
-            onClick={() => {
-                run(`code (${item.path})`);
-                Recent.set({ ...item })
-            }}
         />
     }
 
     return (
-        <Container maxWidth="md" className="wrapper">
+        <Container maxWidth="lg" className="wrapper">
             <Title
                 title="Hot Repos"
                 subtitle="Recently Repositories You Were Working On!"

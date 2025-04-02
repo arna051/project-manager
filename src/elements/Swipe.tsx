@@ -76,6 +76,7 @@ export function Swipe({ children, height = 100 }: Props) {
                         height: 40,
                         fontSize: "0.9rem",
                         scrollSnapAlign: "start",
+                        p: 1
                     }}
                     children={view}
                 />

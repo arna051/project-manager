@@ -39,7 +39,7 @@ export function Projects() {
     }, [])
 
     return (
-        <Container maxWidth="md" className="wrapper">
+        <Container maxWidth="lg" className="wrapper">
             <Title
                 title="Projects"
                 subtitle="List Of All Your Working Projects."
@@ -64,7 +64,7 @@ export function Projects() {
                             :
                             items
                                 .filter(x => new RegExp(search, 'i').test(x.title))
-                                .map(item => <Project {...item} key={item.id} />)
+                                .map(item => <Project {...item} key={item.id} link={`/projects/${item.id}`} />)
                     }
                 </Swipe>
 
