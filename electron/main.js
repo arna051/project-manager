@@ -209,7 +209,6 @@ const removeParenthesesContent = (str) => {
 };
 ipcMain.on('run', (_, command = '') => {
     const args = extractParenthesesContent(command);
-    console.log(args);
 
     const child = spawn(removeParenthesesContent(command).trim(), args, {
         detached: true,
