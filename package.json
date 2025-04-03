@@ -8,13 +8,15 @@
   "main": "electron/app.js",
   "scripts": {
     "next:dev": "next dev --turbopack",
-    "next:build": "next build",
+    "next:build": "sudo rm -r .next && next build",
+    "clean": "npx modclean -r -n default:safe",
     "dev": "yarn electron:pack && ELECTRON_ENV=development electron .",
     "build": "yarn electron:pack && yarn next:build && yarn electron:build",
-    "electron:build": "electron-builder build --linux --x64",
+    "electron:build": "sudo rm -r dist && electron-builder build --linux --x64",
     "electron:pack": "webpack --config webpack.js"
   },
   "build": {
+    "compression": "maximum",
     "appId": "ir.hippogriff.project-manager",
     "productName": "Hippo-Project",
     "directories": {
@@ -30,10 +32,24 @@
     },
     "files": [
       ".next/**/*",
-      "electron/**/*",
+      "electron/app.js",
+      "electron/preload.js",
       "public/**/*",
+      "!**/*.map",
+      "!**/node_modules",
+      "!**/cache",
       "package.json",
-      "src/**/*"
+      "!node_modules/electron/dist/*.pdb",
+      "!node_modules/electron/dist/*.dSYM"
+    ],
+    "extraResources": [
+      {
+        "from": "node_modules/electron/dist/locales",
+        "to": "locales",
+        "filter": [
+          "en-US.pak"
+        ]
+      }
     ]
   },
   "dependencies": {

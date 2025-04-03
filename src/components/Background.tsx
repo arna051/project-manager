@@ -3,9 +3,8 @@ import { useSettings } from "@/hooks/useSettings";
 import { Box } from "@mui/material";
 
 export function Background() {
-
     const { background } = useSettings();
-    if (background === 'OFF') return null;
+    if (background === 'OFF' || !background) return null;
     return <Box
         component="div"
         sx={{
@@ -43,7 +42,7 @@ export function Background() {
                 width: '100%',
                 height: '100%',
                 bgcolor: 'background.default',
-                opacity: .9
+                opacity: .75
             }}
         />
     </Box>

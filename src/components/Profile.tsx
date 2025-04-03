@@ -9,17 +9,19 @@ export function Profile() {
     return <Appear>
         <Container maxWidth="lg" sx={{ mb: 4 }}>
             <Stack direction="row" gap={4} alignItems="center">
-                <Avatar
-                    src={image ? `/file${image}` : "/sharohil.jpg"}
-                    alt="sharohil"
-                    sx={{
-                        width: 110,
-                        height: 110
-                    }}
-                />
+                {
+                    !!image && <Avatar
+                        src={`/file${image}`}
+                        alt="sharohil"
+                        sx={{
+                            width: 110,
+                            height: 110
+                        }}
+                    />
+                }
                 <Stack>
                     <Typography variant="h2">
-                        Hi, <Typography component="span" variant="h2" color="primary.main">{name || "Sharohil"}</Typography>
+                        Hi, <Typography component="span" variant="h2" color="primary.main">{name || "Buddy"}</Typography>
                     </Typography>
                     <Typography variant="h5" color="text.secondary">
                         {welcome || "Ready to Work Today? Happy Hacking!"}
