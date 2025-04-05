@@ -84,7 +84,7 @@ export default function Projects() {
             </Select>
         </Stack>
 
-        <Grid container spacing={1} sx={{ my: 4 }}>
+        <Grid container spacing={1} sx={{ my: 4 }} component="div" className="bring-wrapper">
             {
                 items
                     .filter(x => {
@@ -99,6 +99,7 @@ export default function Projects() {
                             md: 3
                         }}
                         key={item.id + item.title}
+                        sx={{ transformStyle: 'preserve-3d', perspective: 300 }}
                     >
                         <Project
                             {...item}
@@ -106,6 +107,10 @@ export default function Projects() {
                             onDelete={() => handleDelete(item.id)}
                             onEdit={() => handleEdit(item)}
                             link={`/projects/${item.id}`}
+                            sx={{
+                                width: '100%',
+                                height: '100%'
+                            }}
                         />
                     </Grid>
                     )

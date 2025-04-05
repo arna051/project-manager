@@ -10,7 +10,7 @@
     "next:dev": "next dev --turbopack",
     "next:build": "sudo rm -r .next && next build",
     "clean": "npx modclean -r -n default:safe",
-    "dev": "yarn electron:pack && ELECTRON_ENV=development electron .",
+    "dev": "yarn electron:pack && ENV_NODE=development ELECTRON_ENV=development electron .",
     "build": "yarn electron:pack && yarn next:build && yarn electron:build",
     "electron:build": "sudo rm -r dist && electron-builder build --linux --x64",
     "electron:pack": "webpack --config webpack.js"
