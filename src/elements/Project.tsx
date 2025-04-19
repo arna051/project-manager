@@ -14,6 +14,7 @@ export type IProject = {
     id: number
     servers: number[]
     category: string
+    rate: number
 }
 
 type Props = {
@@ -65,6 +66,7 @@ export function Project({ image, desc, title, id, servers, category, onEdit, onD
     useEffect(() => {
         load()
     }, [open.value, save.value]);
+
 
 
     const renderMedia = <>
