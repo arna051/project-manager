@@ -33,8 +33,8 @@ export default function Projects() {
         const temp = await getConfig("projects-contracts", [])
         const cats = await getConfig("projects", []);
 
-        setCategories(cats)
-        setItems(temp)
+        setCategories(cats);
+        setItems(temp.sort((a, b) => (b.rate || 1) - (a.rate || 1)))
     }
 
     useEffect(() => {
