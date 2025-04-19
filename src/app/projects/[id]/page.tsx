@@ -110,7 +110,7 @@ export default function Projects({ params }: any) {
             const temp = await getConfig<IProject[]>("projects-contracts", []);
             const index = temp.findIndex(x => x.id === Number(id));
             if (index < 0) return;
-            if (!!temp[index].rate) temp[index].rate = 1;
+            if (!temp[index].rate) temp[index].rate = 1;
             temp[index].rate += 1;
             saveConfig("projects-contracts", [...temp.sort((a, b) => b.rate - a.rate)]);
         })()
